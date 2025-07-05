@@ -1,0 +1,285 @@
+type ApprovalForAll @entity(immutable: true) {
+  id: Bytes!
+  account: Bytes! # address
+  operator: Bytes! # address
+  approved: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DiscountCost @entity(immutable: true) {
+  id: Bytes!
+  account: Bytes! # address
+  internal_id: BigInt! # uint256
+  discountCost: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FlowEdgesScopeLastEnded @entity(immutable: true) {
+  id: Bytes!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FlowEdgesScopeSingleStarted @entity(immutable: true) {
+  id: Bytes!
+  flowEdgeId: BigInt! # uint256
+  streamId: Int! # uint16
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GroupMint @entity(immutable: true) {
+  id: Bytes!
+  sender: Bytes! # address
+  receiver: Bytes! # address
+  group: Bytes! # address
+  collateral: [BigInt!]! # uint256[]
+  amounts: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PersonalMint @entity(immutable: true) {
+  id: Bytes!
+  human: Bytes! # address
+  amount: BigInt! # uint256
+  startPeriod: BigInt! # uint256
+  endPeriod: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RegisterGroup @entity(immutable: true) {
+  id: Bytes!
+  group: Bytes! # address
+  mint: Bytes! # address
+  treasury: Bytes! # address
+  name: String! # string
+  symbol: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RegisterHuman @entity(immutable: true) {
+  id: Bytes!
+  avatar: Bytes! # address
+  inviter: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type RegisterOrganization @entity(immutable: true) {
+  id: Bytes!
+  organization: Bytes! # address
+  name: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type SetAdvancedUsageFlag @entity(immutable: true) {
+  id: Bytes!
+  avatar: Bytes! # address
+  flag: Bytes! # bytes32
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Stopped @entity(immutable: true) {
+  id: Bytes!
+  avatar: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type StreamCompleted @entity(immutable: true) {
+  id: Bytes!
+  operator: Bytes! # address
+  from: Bytes! # address
+  to: Bytes! # address
+  ids: [BigInt!]! # uint256[]
+  amounts: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TransferBatch @entity(immutable: true) {
+  id: Bytes!
+  operator: Bytes! # address
+  from: Bytes! # address
+  to: Bytes! # address
+  ids: [BigInt!]! # uint256[]
+  values: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TransferSingle @entity(immutable: true) {
+  id: Bytes!
+  operator: Bytes! # address
+  from: Bytes! # address
+  to: Bytes! # address
+  internal_id: BigInt! # uint256
+  value: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Trust @entity(immutable: true) {
+  id: Bytes!
+  truster: Bytes! # address
+  trustee: Bytes! # address
+  expiryTime: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type URI @entity(immutable: true) {
+  id: Bytes!
+  value: String! # string
+  internal_id: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+# New entity for account balances
+type AccountBalance @entity(immutable: false) {
+  id: ID! # Format: {account}-{tokenId}
+  account: Bytes! # address
+  tokenId: BigInt! # uint256
+  tokenAddress: Bytes! # address
+  balance: BigInt! # uint256
+  lastActivity: BigInt! # timestamp
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+# Helper entity to track token addresses
+type Token @entity(immutable: false) {
+  id: ID! # tokenId as string
+  tokenId: BigInt! # uint256
+  tokenAddress: Bytes! # address
+}
+
+# Entity for V_CrcV2_TrustRelations - only active trusts
+type TrustRelation @entity(immutable: false) {
+  id: ID! # Format: {truster}-{trustee}
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  transactionIndex: BigInt!
+  logIndex: BigInt!
+  transactionHash: Bytes!
+  truster: Bytes! # address
+  trustee: Bytes! # address
+  expiryTime: BigInt!
+}
+
+# Entity for V_CrcV2_Transfers - unified view of all transfers
+type Transfer @entity(immutable: true) {
+  id: ID! # Format: {txHash}-{logIndex}-{batchIndex}
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  transactionIndex: BigInt!
+  logIndex: BigInt!
+  batchIndex: Int! # 0 for single transfers
+  transactionHash: Bytes!
+  operator: Bytes # address (null for ERC20 wrapper transfers)
+  from: Bytes! # address
+  to: Bytes! # address
+  tokenId: BigInt! # uint256
+  value: BigInt! # uint256
+  transferType: String! # TransferSingle, TransferBatch, or ERC20WrapperTransfer
+  tokenAddress: Bytes! # address
+  eventIndex: Int! # Sequential index within the transaction
+}
+
+# Entity for V_CrcV2_TotalSupply - tracks total supply per token
+type TokenTotalSupply @entity(immutable: false) {
+  id: ID! # tokenId as string
+  tokenAddress: Bytes! # address
+  tokenId: BigInt! # uint256
+  totalSupply: BigInt! # uint256
+}
+
+# Entity for V_CrcV2_Avatars - unified view of all avatars
+type Avatar @entity(immutable: false) {
+  id: ID! # avatar address
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  transactionIndex: BigInt!
+  logIndex: BigInt!
+  transactionHash: Bytes!
+  avatarType: String! # RegisterHuman, RegisterGroup, or RegisterOrganization
+  invitedBy: Bytes # address (only for humans)
+  avatar: Bytes! # address
+  tokenId: BigInt # same as avatar for humans and groups
+  name: String # name for orgs and groups
+  cidV0Digest: Bytes # metadata digest
+}
+
+# Entity for transfer paths
+type TransferPath @entity(immutable: false) {
+  id: ID! # {txHash}-{logIndex} (using StreamCompleted's logIndex)
+  transactionHash: Bytes!
+  streamCompletedId: String! # Link to StreamCompleted event
+  originalSender: Bytes!
+  finalRecipient: Bytes!
+  isCircular: Boolean!
+  totalHops: Int! # Total hops across all paths
+  totalPaths: Int! # Number of distinct paths found
+  hops: [TransferHop!]! @derivedFrom(field: "path")
+  
+  # Aggregated data from StreamCompleted
+  receivedTokenIds: [BigInt!]!
+  receivedAmounts: [BigInt!]!
+  
+  operator: Bytes!
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  logIndex: BigInt!
+}
+
+# Entity for individual hops in a transfer path
+type TransferHop @entity(immutable: true) {
+  id: ID! # {pathId}-{hopIndex}
+  path: TransferPath!
+  hopIndex: Int!
+  from: Bytes!
+  to: Bytes!
+  tokenId: BigInt!
+  tokenAddress: Bytes!
+  value: BigInt! # Flow amount for this specific path
+  
+  # For debugging/verification
+  transferType: String! # TransferSingle or TransferBatch
+  logIndex: BigInt!
+  batchIndex: Int!
+  pathNumber: Int! # Which path this hop belongs to (for grouping)
+}
+
+# Helper entity to track transfers by transaction
+type Transaction @entity(immutable: false) {
+  id: ID! # transaction hash
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  transferIds: [String!]! # Array of Transfer entity IDs
+  streamCompletedIds: [String!]! # Array of StreamCompleted entity IDs
+  hasBeenProcessed: Boolean!
+}

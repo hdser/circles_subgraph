@@ -1,0 +1,73 @@
+specVersion: 1.3.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Hub
+    network: gnosis
+    source:
+      address: "0xc12C1E50ABB450d6205Ea2C3Fa861b3B834d13e8"
+      abi: Hub
+      startBlock: 36486014
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - ApprovalForAll
+        - DiscountCost
+        - FlowEdgesScopeLastEnded
+        - FlowEdgesScopeSingleStarted
+        - GroupMint
+        - PersonalMint
+        - RegisterGroup
+        - RegisterHuman
+        - RegisterOrganization
+        - SetAdvancedUsageFlag
+        - Stopped
+        - StreamCompleted
+        - TransferBatch
+        - TransferSingle
+        - Trust
+        - URI
+        - AccountBalance
+        - Token
+      abis:
+        - name: Hub
+          file: ./abis/Hub.json
+      eventHandlers:
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
+        - event: DiscountCost(indexed address,indexed uint256,uint256)
+          handler: handleDiscountCost
+        - event: FlowEdgesScopeLastEnded()
+          handler: handleFlowEdgesScopeLastEnded
+        - event: FlowEdgesScopeSingleStarted(indexed uint256,uint16)
+          handler: handleFlowEdgesScopeSingleStarted
+        - event: GroupMint(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleGroupMint
+        - event: PersonalMint(indexed address,uint256,uint256,uint256)
+          handler: handlePersonalMint
+        - event: RegisterGroup(indexed address,indexed address,indexed address,string,string)
+          handler: handleRegisterGroup
+        - event: RegisterHuman(indexed address,indexed address)
+          handler: handleRegisterHuman
+        - event: RegisterOrganization(indexed address,string)
+          handler: handleRegisterOrganization
+        - event: SetAdvancedUsageFlag(indexed address,bytes32)
+          handler: handleSetAdvancedUsageFlag
+        - event: Stopped(indexed address)
+          handler: handleStopped
+        - event: StreamCompleted(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleStreamCompleted
+        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
+          handler: handleTransferBatch
+        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleTransferSingle
+        - event: Trust(indexed address,indexed address,uint256)
+          handler: handleTrust
+        - event: URI(string,indexed uint256)
+          handler: handleURI
+      file: ./src/hub.ts
