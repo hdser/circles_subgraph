@@ -1,7 +1,11 @@
-import { Link } from 'react-router-dom';
-import { GitBranch } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { GitBranch, MessageCircle } from 'lucide-react';
+import clsx from 'clsx';
 
 export default function Header() {
+  const location = useLocation();
+  const isChat = location.pathname === '/chat';
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="container mx-auto px-4">
@@ -18,6 +22,18 @@ export default function Header() {
           </Link>
           
           <nav className="flex items-center space-x-6">
+            <Link
+              to="/chat"
+              className={clsx(
+                'flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors',
+                isChat
+                  ? 'bg-circles-purple text-white'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              )}
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span>Chat</span>
+            </Link>
             <a
               href="https://github.com/aboutcircles"
               target="_blank"

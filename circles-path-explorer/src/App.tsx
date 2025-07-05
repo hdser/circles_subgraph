@@ -8,6 +8,7 @@ import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import TransactionView from './pages/TransactionView';
 import AddressView from './pages/AddressView';
+import Chat from './pages/Chat';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/tx/:hash" element={<TransactionView />} />
                 <Route path="/address/:address" element={<AddressView />} />
+                <Route path="/chat" element={<Chat />} />
               </Routes>
             </Layout>
             <Toaster position="bottom-right" />

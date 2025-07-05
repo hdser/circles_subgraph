@@ -1,5 +1,6 @@
 import SearchBar from '../components/search/SearchBar';
-import { GitBranch, Search, Users, BarChart3 } from 'lucide-react';
+import { GitBranch, Search, Users, BarChart3, MessageCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
@@ -23,7 +24,7 @@ export default function Home() {
       </div>
 
       {/* Features */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
         <div className="card text-center">
           <Search className="h-12 w-12 text-circles-purple mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Transaction Analysis</h3>
@@ -47,6 +48,14 @@ export default function Home() {
             Understand complex circular transfers and multi-hop payment flows with detailed breakdowns
           </p>
         </div>
+
+        <Link to="/chat" className="card text-center hover:shadow-lg transition-shadow cursor-pointer">
+          <MessageCircle className="h-12 w-12 text-blue-500 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">AI Assistant</h3>
+          <p className="text-gray-600">
+            Chat with our AI to explore transfers, understand patterns, and learn about Circles
+          </p>
+        </Link>
       </div>
     </div>
   );
