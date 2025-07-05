@@ -2,7 +2,101 @@
 
 This repository contains two main components: a **Circles V2 Subgraph** for indexing data from the Circles V2 protocol and a **Circles Path Explorer**, a visualization tool that consumes data from the subgraph to display information about Circles paths.
 
-This project provides a comprehensive solution for exploring and understanding the flow of Circles, a Universal Basic Income (UBI) project on the Gnosis chain. The `circles-v-2-hub` is included as a **Git submodule**, allowing the two parts of the project to be developed independently while being tracked in this central repository.
+This project provides a solution for exploring and understanding the flow in Circles network on the Gnosis chain. The `circles-v-2-hub` is included as a **Git submodule**, allowing the two parts of the project to be developed independently while being tracked in this central repository.
+
+-----
+
+## 🏛️ Architecture Overview
+
+The system is composed of three main parts: the **Frontend**, a **Backend bridge**, and the **Subgraph** on The Graph Protocol.
+
+```
++----------------+      +---------------------+      +------------------------+
+|                |      |                     |      |                        |
+|    Browser     +------>      Backend        +------>       MCP Server       |
+| (React App)    |      |   (Node.js/Express) |      | (The Graph Protocol)   |
+|                |      |                     |      |                        |
++----------------+      +---------------------+      +------------------------+
+                                                            |
+                                                            | GraphQL
+                                                            v
+                                                     +----------------+
+                                                     |                |
+                                                     |    Subgraph    |
+                                                     |  (Indexer)     |
+                                                     |                |
+                                                     +----------------+
+                                                            |
+                                                            | Indexes
+                                                            v
+                                                     +----------------+
+                                                     |                |
+                                                     | Gnosis Chain   |
+                                                     | (Smart Contracts) |
+                                                     +----------------+
+```
+
+-----
+
+## 🎨 Circles Path Explorer (Frontend)
+
+The Circles Path Explorer is a modern, responsive web application built with React and TypeScript. It provides a user-friendly interface for visualizing and exploring the paths of Circles transfers between different accounts. Users can search for specific addresses or transaction hashes to see detailed information about the flow of Circles.
+
+### Application Structure
+
+  * **`src/components/`**: A collection of reusable React components that make up the user interface.
+  * **`src/hooks/`**: Custom React hooks that encapsulate the logic for fetching and managing data from the subgraph.
+  * **`src/pages/`**: The main pages of the application, such as the home page and the detailed views for addresses and transactions.
+  * **`src/services/`**: Contains the GraphQL client and queries for interacting with the subgraph.
+  * **`src/utils/`**: Utility functions for formatting data, defining constants, and other helper logic.
+
+### Frontend Data Flow:
+
+```
+1. User Interaction (e.g., enters address)
+   |
+   v
+2. React Component (e.g., AddressView.tsx)
+   |
+   v
+3. Custom Hook (e.g., usePathsByAddress)
+   |
+   v
+4. Apollo Client (executes GraphQL query)
+   |
+   v
+5. Subgraph (via Backend/MCP)
+   |
+   v
+6. Data is returned and rendered in components
+```
+
+-----
+
+## 🌉 Backend: MCP Bridge
+
+The backend is a Node.js application that serves as a secure bridge between the frontend and the MCP server.
+
+### AI Chat Data Flow:
+
+```
++----------+           +-----------+           +-------------+         +----------+
+|          |  Message  |           |  Generate   |             |  Execute  |          |
+| Frontend +-----------> Backend   +-------------> OpenAI        |  Query    | Subgraph |
+|          |           | (Node.js) |             | (GraphQL)   |           |          |
++----------+           +-----+-----+           +------+------+         +----+-----+
+                             |                        ^                     |
+                             |                        |                     |
+                             +------------------------+---------------------+
+                                       MCP Client
+```
+
+1.  **User sends a message** to the chat interface on the frontend.
+2.  The message is sent to the **backend** via a WebSocket connection.
+3.  The backend's `OpenAIService` sends the user's message to the **OpenAI API** to be converted into a GraphQL query.
+4.  The `MCPClient` on the backend executes the generated query against the **Subgraph** through the MCP server.
+5.  The results from the subgraph are returned to the `OpenAIService` to be formatted into a human-readable response.
+6.  The formatted response is sent back to the frontend and displayed to the user.
 
 -----
 
@@ -16,19 +110,33 @@ The subgraph is a custom data indexing solution built using The Graph Protocol. 
   * **`schema.graphql`**: Defines the data schema for the subgraph, including the structure of entities such as Avatars, Trusts, and Transfers.
   * **`src/`**: Contains the AssemblyScript code that handles the business logic for transforming event data from the smart contracts into the entities defined in the schema.
 
------
+### Path Reconstruction Logic:
 
-## 🎨 Circles Path Explorer
+A key feature of the subgraph is its ability to reconstruct transfer paths from `StreamCompleted` events.
 
-The Circles Path Explorer is a modern, responsive web application built with React and TypeScript. It provides a user-friendly interface for visualizing and exploring the paths of Circles transfers between different accounts. Users can search for specific addresses or transaction hashes to see detailed information about the flow of Circles.
+```
+1. "StreamCompleted" event is emitted from the Hub contract
+   |
+   v
+2. The `handleStreamCompleted` function is triggered in `src/hub.ts`
+   |
+   v
+3. `reconstructPathFromStreamCompleted` is called
+   |
+   v
+4. All "TransferSingle" and "TransferBatch" events from the same transaction are loaded
+   |
+   v
+5. A flow network is built from the transfers
+   |
+   v
+6. The `findAllPaths` function decomposes the flow to identify individual transfer paths
+   |
+   v
+7. "TransferPath" and "TransferHop" entities are created and saved to the subgraph
+```
 
-### Application Structure
-
-  * **`src/components/`**: A collection of reusable React components that make up the user interface.
-  * **`src/hooks/`**: Custom React hooks that encapsulate the logic for fetching and managing data from the subgraph.
-  * **`src/pages/`**: The main pages of the application, such as the home page and the detailed views for addresses and transactions.
-  * **`src/services/`**: Contains the GraphQL client and queries for interacting with the subgraph.
-  * **`src/utils/`**: Utility functions for formatting data, defining constants, and other helper logic.
+This process allows the frontend to query for fully formed transfer paths, even for complex, multi-hop transactions.
 
 -----
 
