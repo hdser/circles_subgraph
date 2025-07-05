@@ -38,11 +38,21 @@ export default function ChatBot({ className }: ChatBotProps) {
 
   // Initialize socket connection
   useEffect(() => {
-    const socketUrl = import.meta.env.VITE_CHAT_SERVER_URL || 'http://localhost:3001';
+    // Determine the correct URL based on where we're running
+    let socketUrl;
+    if (window.location.hostname === 'localhost') {
+      // Local development
+      socketUrl = 'http://localhost:3001';
+    } else {
+      // Production - use the same origin
+      socketUrl = window.location.origin;
+    }
     console.log('Connecting to chat server:', socketUrl);
     
     const socketInstance = io(socketUrl, {
-      transports: ['websocket'],
+      transports: window.location.hostname === 'localhost' 
+        ? ['websocket', 'polling']  // WebSocket first for local dev
+        : ['polling'],              // Only polling for production (Vercel)
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionAttempts: 5

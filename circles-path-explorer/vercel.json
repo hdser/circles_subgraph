@@ -1,0 +1,24 @@
+{
+  "buildCommand": "npm run build:all",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "functions": {
+    "api/chat.ts": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/socket.io/(.*)",
+      "destination": "/api/chat"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/chat"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -27,3 +27,8 @@ dist-ssr
 .env
 .env.local
 .env.production
+
+.vercel
+dist/
+backend/dist/
+api/

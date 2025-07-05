@@ -203,34 +203,6 @@ Modify Sankey diagram appearance in:
 - `src/services/sankey/colorScheme.ts` - Token colors
 - `src/styles/echarts-theme.ts` - Chart theme
 
-## 🐛 Troubleshooting
-
-### MCP Connection Issues
-
-- Ensure `mcp-remote` is installed globally
-- Verify your Graph API key is valid
-- Check backend logs for connection status
-
-### Chat Not Working
-
-- Verify OpenAI API key is set correctly
-- Check WebSocket connection in browser console
-- Ensure backend is running on correct port
-
-### No Data Showing
-
-- Verify subgraph ID and key are correct
-- Check Apollo Client network requests
-- Ensure the subgraph is indexed and synced
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
 ## 📄 License
 
 This project is licensed under the MIT License.

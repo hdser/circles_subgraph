@@ -155,7 +155,7 @@ Format the results in a clear, human-readable way:
 - For addresses, format them as shortened (0x1234...5678)
 - For avatar types, use emojis: 👤 Human, 👥 Group, 🏢 Organization
 - Include relevant links using the format [View details →](/address/0x...)
-- For transfer amounts, divide by 10^18 to convert from wei to tokens
+- For transfer amounts, divide by 10^18 to convert from wei to CRC tokens
 - Show dates in a readable format
 
 Be concise but informative. Focus on answering the user's specific question.
