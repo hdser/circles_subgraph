@@ -132,6 +132,58 @@ cd backend
 npm start
 ```
 
+## 🚀 Deployment
+
+### Vercel Deployment (Limited Functionality)
+
+⚠️ **Important Note**: The current Vercel deployment has limitations. Due to Vercel's serverless architecture, the WebSocket-based chat functionality does not work properly. The deployment script (`deploy.sh`) attempts to work around this by forcing polling transport, but a proper backend deployment is recommended for full functionality.
+
+For quick deployment to Vercel:
+
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+**What works on Vercel:**
+- ✅ Transaction path visualization
+- ✅ Address exploration
+- ✅ GraphQL queries to the subgraph
+- ❌ AI Chat assistant (requires persistent WebSocket connection)
+
+### Recommended Production Deployment
+
+For full functionality including the AI chat assistant, deploy the backend and frontend separately:
+
+**Backend Options:**
+- **Railway**: Supports WebSocket connections
+- **Heroku**: With WebSocket support enabled
+- **AWS EC2/ECS**: Full control over the environment
+- **DigitalOcean App Platform**: Supports WebSocket
+
+**Frontend Options:**
+- **Vercel**: For the React app (update `VITE_CHAT_SERVER_URL` to point to your backend)
+- **Netlify**: Alternative static hosting
+- **CloudFlare Pages**: Fast global CDN
+
+**Example Railway Deployment:**
+
+1. Backend:
+```bash
+cd backend
+railway login
+railway init
+railway add
+railway up
+```
+
+2. Frontend on Vercel:
+```bash
+# Update .env with your Railway backend URL
+VITE_CHAT_SERVER_URL=https://your-backend.railway.app
+vercel --prod
+```
+
 ## 🎯 Usage Guide
 
 ### 1. Search by Transaction
@@ -194,7 +246,7 @@ Update the subgraph configuration in:
 
 Change the OpenAI model in backend `.env`:
 ```env
-OPENAI_MODEL=gpt-4-turbo-preview  # or gpt-3.5-turbo for faster/cheaper responses
+OPENAI_MODEL=gpt4.1-nano 
 ```
 
 ### Visualization Settings
@@ -202,6 +254,31 @@ OPENAI_MODEL=gpt-4-turbo-preview  # or gpt-3.5-turbo for faster/cheaper response
 Modify Sankey diagram appearance in:
 - `src/services/sankey/colorScheme.ts` - Token colors
 - `src/styles/echarts-theme.ts` - Chart theme
+
+## 🔍 Understanding the Circles V2 Network
+
+### Transfer Paths
+
+A transfer path represents the complete flow of tokens from an original sender to a final recipient. In Circles V2:
+
+- **Direct Transfers**: Simple A → B transfers
+- **Multi-hop Transfers**: A → B → C → D, where trust relationships enable the flow
+- **Circular Transfers**: Paths where the final recipient is also the original sender
+
+### Trust Networks
+
+The Circles system is built on trust relationships:
+- Users can trust other users' tokens
+- This creates a network where tokens can flow through trusted paths
+- Multi-hop transfers leverage these trust relationships
+
+### Avatar Types
+
+Three types of participants in the network:
+- **👤 Human**: Individual users
+- **👥 Group**: Collective entities
+- **🏢 Organization**: Institutional participants
+
 
 ## 📄 License
 
