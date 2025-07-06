@@ -1,4 +1,4 @@
-# Circles UBI Path Explorer & Subgraph
+# Circles Path Explorer & Subgraph
 
 This repository contains two main components: a **Circles V2 Subgraph** for indexing data from the Circles V2 protocol and a **Circles Path Explorer**, a visualization tool that consumes data from the subgraph to display information about Circles paths.
 

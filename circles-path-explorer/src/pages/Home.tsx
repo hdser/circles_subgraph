@@ -11,7 +11,9 @@ export default function Home() {
           <GitBranch className="h-16 w-16 text-circles-purple" />
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Circles Path Explorer
+          <span style={{ color: 'hsl(244.67 47.87% 36.86% / 1)' }}>Circles</span>
+            {' '}
+            <span style={{ color: 'hsl(8.09 68.78% 59.8% / 1)' }}>PathExplorer</span>
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
           Explore and visualize token transfer paths in the Circles V2 network

@@ -31,26 +31,34 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Initialize socket connection
   useEffect(() => {
-    const socketUrl = import.meta.env.VITE_CHAT_SERVER_URL || 'http://localhost:3001';
-    console.log('Connecting to chat server:', socketUrl);
+    const isProduction = process.env.NODE_ENV === 'production';
+    const socketUrl = isProduction ? window.location.origin : 'http://localhost:3001';
+    const transports = isProduction ? ['polling'] : ['websocket', 'polling'];
+
+    console.log(`[Socket.io] Environment: ${isProduction ? 'Production' : 'Development'}`);
+    console.log(`[Socket.io] Connecting to: ${socketUrl}`);
+    console.log(`[Socket.io] Using transports: ${transports.join(', ')}`);
     
     const socketInstance = io(socketUrl, {
-      transports: ['websocket'],
+      transports,
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionAttempts: 5
     });
 
     socketInstance.on('connect', () => {
-      console.log('Connected to chat server');
+      console.log('[Socket.io] Connected successfully');
       setIsConnected(true);
     });
 
     socketInstance.on('disconnect', () => {
-      console.log('Disconnected from chat server');
+      console.log('[Socket.io] Disconnected');
       setIsConnected(false);
+    });
+
+    socketInstance.on('connect_error', (err) => {
+      console.error('[Socket.io] Connection error:', err.message);
     });
 
     socketInstance.on('ready', (data: { sessionId: string; model: string }) => {
@@ -77,13 +85,12 @@ export default function Chat() {
 
     setSocket(socketInstance);
 
-    // Request history if reconnecting
-    socketInstance.emit('get_history');
-
     return () => {
       socketInstance.disconnect();
     };
   }, []);
+
+  // ... (the rest of your component remains the same)
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -106,7 +113,6 @@ export default function Chat() {
 
     socket.emit('message', { message: inputValue });
     
-    // Reset textarea height
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
     }
@@ -121,8 +127,6 @@ export default function Chat() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
-    
-    // Auto-resize textarea
     e.target.style.height = 'auto';
     e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
   };
